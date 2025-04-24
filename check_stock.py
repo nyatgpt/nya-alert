@@ -19,22 +19,16 @@ def send_telegram_message(message):
 
 # 檢查庫存的函式
 def check_stock():
-    with open("products.json", "r", encoding="utf-8") as f:
-        products = json.load(f)
-
     for product in products:
-        try:
-            response = requests.get(product["url"])
-            response.raise_for_status()  # 若網站有錯誤，會丟出 exception
+        response = requests.get(product["url"])
 
-            page_text = response.text.lower()
-
-            # 根據常見「缺貨」關鍵字判斷
-            if any(keyword in page_text for keyword in ["在庫確認中", "売り切れ", "sold out"]):
-                print(f"{product['name']} 缺貨中")
-            else:
-                message = f"📦【{product['name']}】有庫存啦！\n🔗 {product['url']}"
-                send_telegram_message(message)
+        # 假設商品頁面有「カートに追加する」字樣來檢查庫存狀態
+        if "カートに追加する" in response.text:
+            message = f"📦【{product['name']}】有庫存啦！\n🔗 {product['url']}"
+        else:
+            message = f"❌【{product['name']}】目前無庫存"
+        
+        send_telegram_message(message)
 
         except Exception as e:
             print(f"❌ 檢查 {product['name']} 時發生錯誤：{e}")
