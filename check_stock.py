@@ -23,13 +23,15 @@ def check_stock():
             # 檢查頁面中是否存在庫存標記
             if "http://schema.org/InStock" in response.text:
                 message = f"📦【{product['name']}】有庫存啦！\n🔗 {product['url']}"
+                send_telegram_message(message)  # 只有有庫存時發送通知
             elif "http://schema.org/OutOfStock" in response.text:
-                message = f"❌【{product['name']}】目前無庫存\n🔗 {product['url']}"
+                # 無庫存時不做任何處理，不發送通知
+                pass
             else:
+                # 如果無法確定庫存狀態，可以選擇發送「庫存狀態未知」通知
                 message = f"⚠️【{product['name']}】庫存狀態未知\n🔗 {product['url']}"
+                send_telegram_message(message)
 
-            # 發送訊息
-            send_telegram_message(message)
         except Exception as e:
             # 捕捉異常並記錄錯誤
             error_message = f"Error checking {product['name']}: {e}"
