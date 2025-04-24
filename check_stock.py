@@ -1,5 +1,9 @@
-import requests
-import json
+import telegram
+import os
+
+# 臨時測試用，確認訊息是否發得出去
+bot = telegram.Bot(token=os.environ["telegram_bot_token"])
+bot.send_message(chat_id=os.environ["telegram_chat_id"], text="這是一則測試訊息 from GitHub Actions")
 
 # 設定 Telegram Bot Token 和 Chat ID
 bot_token = "your_telegram_bot_token"  # 用你的 bot token 替換
